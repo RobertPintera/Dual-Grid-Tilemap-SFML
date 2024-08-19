@@ -9,4 +9,4 @@ Dual Grid Tilemap is an alternative way to auto-tiling that doesn't require a lo
 - Right mouse button - delete tile
 
 # Preview
-![Dual Grid](preview/preview%20dual-grid%20tilemap.gif)
+![Dual Grid](Preview/preview%20dual-grid%20tilemap.gif)
