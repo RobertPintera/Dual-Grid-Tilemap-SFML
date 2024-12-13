@@ -1,12 +1,38 @@
 #include "App.h"
 
-App::App()
+App::App():window(sf::VideoMode(1280, 720), "Dual-Grid system", sf::Style::Default),
+dt(0.f),isZoom(false),isMovedView(false)
 {
-	initVariables();
-	initWindow();
-	initViews();
-	initGridsAndTilemap();
-	initInformationPanel();
+	window.setFramerateLimit(60);
+
+	if (!font.loadFromFile("Fonts/RPixerick.ttf"))
+		std::cout << "Can't load font!" << std::endl;
+
+	//Init Views
+	viewSpeed = SPEED_MOVEMENT_GRID;
+	mainView.setSize(1280.f, 720.f);
+	mainView.setCenter(window.getSize().x / 2.f, window.getSize().y / 2.f);
+
+	supplementaryView.setSize(1280.f, 720.f);
+	supplementaryView.setCenter(window.getSize().x / 2.f, window.getSize().y / 2.f);
+
+	minSizeView = window.getDefaultView().getSize() * 0.2f;
+	maxSizeView = window.getDefaultView().getSize() * 2.f;
+
+	//Init Grids
+	sf::Vector2f tileSize = sf::Vector2f(32.f, 32.f);
+
+	grids["MainGrid"] = Grid(mainView.getSize(), mainView.getCenter() - (mainView.getSize() / 2.f), tileSize);
+	grids["DualGrid"] = Grid(mainView.getSize(), mainView.getCenter() - (mainView.getSize() / 2.f), tileSize, tileSize / 2.f);
+	grids["MainGrid"].setGridColor(sf::Color(73, 151, 230, 150));
+	grids["DualGrid"].setGridColor(sf::Color(237, 78, 66, 150));
+
+	//Init TileMap
+	tileMap.reset(sf::Vector2u(100, 100), tileSize, sf::Vector2i(16, 16));
+
+	//Init InformationPanel
+	informationPanel.setPosition(sf::Vector2f(window.getSize().x - informationPanel.getSize().x - 50.f, 50.f));
+	informationPanel.setFont(font);
 }
 
 App::~App()
@@ -18,6 +44,7 @@ void App::updateEvents()
 {
 	HandleEvents::instance.setMouseTicks(0.f);
 
+	sf::Event sfEvent;
 	while (window.pollEvent(sfEvent))
 	{
 		if (sfEvent.type == sf::Event::Closed)
@@ -158,52 +185,4 @@ void App::run()
 		update();
 		render();
 	}
-}
-
-void App::initVariables()
-{
-	dt = 0.f;
-	isZoom = false;
-	isMovedView = false;
-	if (!font.loadFromFile("Fonts/RPixerick.ttf"))
-		std::cout << "Can't load font!" << std::endl;
-}
-
-void App::initWindow()
-{
-	window.create(sf::VideoMode(1280, 720), "Dual-Grid system", sf::Style::Default);
-	window.setFramerateLimit(60);
-}
-
-void App::initViews()
-{
-	viewSpeed = SPEED_MOVEMENT_GRID;
-	mainView.setSize(1280.f, 720.f);
-	mainView.setCenter(window.getSize().x / 2.f, window.getSize().y / 2.f);
-
-	supplementaryView.setSize(1280.f, 720.f);
-	supplementaryView.setCenter(window.getSize().x / 2.f, window.getSize().y / 2.f);
-
-	minSizeView = window.getDefaultView().getSize() * 0.2f;
-	maxSizeView = window.getDefaultView().getSize() * 2.f;
-}
-
-void App::initGridsAndTilemap()
-{
-	//Grids
-	tileSize = sf::Vector2f(32.f, 32.f);
-
-	grids["MainGrid"] = Grid(mainView.getSize(), mainView.getCenter() - (mainView.getSize() / 2.f), tileSize);
-	grids["DualGrid"] = Grid(mainView.getSize(), mainView.getCenter() - (mainView.getSize() / 2.f), tileSize, tileSize/2.f);
-	grids["MainGrid"].setGridColor(sf::Color(73, 151, 230, 150));
-	grids["DualGrid"].setGridColor(sf::Color(237, 78, 66, 150));
-
-	//TileMap
-	tileMap.reset(sf::Vector2u(100, 100), tileSize, sf::Vector2i(16,16));
-}
-
-void App::initInformationPanel()
-{
-	informationPanel.setPosition(sf::Vector2f(window.getSize().x - informationPanel.getSize().x - 50.f, 50.f));
-	informationPanel.setFont(font);
 }

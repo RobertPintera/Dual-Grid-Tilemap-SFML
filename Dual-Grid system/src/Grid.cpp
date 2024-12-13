@@ -1,20 +1,19 @@
 #include "Grid.h"
 
-Grid::Grid():
-	gridSize(sf::Vector2f(16.f,16.f)), gridOffSet(sf::Vector2f(0.f,0.f)), colorGrid(sf::Color(255, 255, 255, 255))
+Grid::Grid(): 
+	gridSize(sf::Vector2f(16.f,16.f)), gridOffSet(sf::Vector2f(0.f,0.f)), colorGrid(sf::Color(255, 255, 255, 255)), 
+	xTiles(0), yTiles(0), vertices(sf::Lines), topLeftDrawPoint(sf::Vector2f(0.f,0.f))
 {
-	vertices.setPrimitiveType(sf::Lines);
-	xTiles = 0;
-	yTiles = 0;
+
 }
 
 Grid::Grid(sf::Vector2f viewSize, sf::Vector2f topLeftPoint, sf::Vector2f gridSize, sf::Vector2f gridOffSet):
-	gridSize(gridSize),gridOffSet(gridOffSet),colorGrid(sf::Color(255, 255, 255, 255))
+	gridSize(gridSize),gridOffSet(gridOffSet),colorGrid(sf::Color(255, 255, 255, 255)),
+	xTiles(static_cast<unsigned int>((viewSize.x / gridSize.x) + 2.f) + 1), 
+	yTiles(static_cast<unsigned int>((viewSize.y / gridSize.y) + 2.f) + 1), 
+	vertices(sf::Lines), topLeftDrawPoint(topLeftPoint)
 {
-	vertices.setPrimitiveType(sf::Lines);
-	bool isZoom = true;
-
-	redrawGrid(viewSize, topLeftPoint, isZoom);
+	redrawGrid(viewSize, topLeftPoint, true);
 }
 
 Grid::~Grid()
@@ -51,25 +50,25 @@ void Grid::updateZoom(sf::Vector2f& viewSize)
 	vertices.resize(numberTiles);
 }
 
-void Grid::update(sf::Vector2f viewSize, sf::Vector2f topLeftpoint, bool& isZoom)
+void Grid::update(sf::Vector2f viewSize, sf::Vector2f topLeftPoint, bool& isZoom)
 {
-	redrawGrid(viewSize,topLeftpoint,isZoom);
+	redrawGrid(viewSize, topLeftPoint, isZoom);
 }
 
-void Grid::redrawGrid(sf::Vector2f& viewSize, sf::Vector2f& topLeftpoint, bool& isZoom)
+void Grid::redrawGrid(sf::Vector2f& viewSize, sf::Vector2f& topLeftPoint, bool isZoom)
 {
-	topLeftDrawPoint = topLeftpoint;
-	float remainderX = std::fmod(topLeftpoint.x, gridSize.x);
-	float remainderY = std::fmod(topLeftpoint.y, gridSize.y);
+	topLeftDrawPoint = topLeftPoint;
+	float remainderX = std::fmod(topLeftPoint.x, gridSize.x);
+	float remainderY = std::fmod(topLeftPoint.y, gridSize.y);
 
 	if (remainderX != 0.f)
 	{
-		topLeftDrawPoint.x = std::floorf(topLeftpoint.x - static_cast<float>(remainderX));
+		topLeftDrawPoint.x = std::floorf(topLeftPoint.x - static_cast<float>(remainderX));
 	}
 
 	if (remainderY != 0.f)
 	{
-		topLeftDrawPoint.y = std::floorf(topLeftpoint.y - static_cast<float>(remainderY));
+		topLeftDrawPoint.y = std::floorf(topLeftPoint.y - static_cast<float>(remainderY));
 	}
 
 	if (isZoom)
@@ -80,14 +79,14 @@ void Grid::redrawGrid(sf::Vector2f& viewSize, sf::Vector2f& topLeftpoint, bool& 
 		sf::Vertex* line = &vertices[i * 2];
 		line[0].position = sf::Vector2f
 		(
-			topLeftDrawPoint.x + i * gridSize.x - gridSize.x + gridOffSet.x, 
-			topLeftpoint.y
+			topLeftDrawPoint.x + i * gridSize.x - gridSize.x + gridOffSet.x,
+			topLeftPoint.y
 		);
 		line[0].color = colorGrid;
 		line[1].position = sf::Vector2f
 		(
-			topLeftDrawPoint.x + i * gridSize.x - gridSize.x + gridOffSet.x, 
-			topLeftpoint.y + viewSize.y
+			topLeftDrawPoint.x + i * gridSize.x - gridSize.x + gridOffSet.x,
+			topLeftPoint.y + viewSize.y
 		);
 		line[1].color = colorGrid;
 		line = nullptr;
@@ -98,12 +97,12 @@ void Grid::redrawGrid(sf::Vector2f& viewSize, sf::Vector2f& topLeftpoint, bool& 
 		sf::Vertex* line = &vertices[xTiles * 2 + i * 2];
 		line[0].position = sf::Vector2f
 		(
-			topLeftpoint.x, 
+			topLeftPoint.x,
 			topLeftDrawPoint.y + i * gridSize.y - gridSize.y + gridOffSet.y);
 		line[0].color = colorGrid;
 		line[1].position = sf::Vector2f
 		(
-			topLeftpoint.x + viewSize.x, 
+			topLeftPoint.x + viewSize.x,
 			topLeftDrawPoint.y + i * gridSize.y - gridSize.y + gridOffSet.y
 		);
 		line[1].color = colorGrid;

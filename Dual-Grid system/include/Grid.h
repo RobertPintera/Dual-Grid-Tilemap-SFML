@@ -27,7 +27,7 @@ private:
 
 	sf::Color colorGrid;
 
-	void redrawGrid(sf::Vector2f& viewSize, sf::Vector2f& topLeftPoint, bool& isZoom);
+	void redrawGrid(sf::Vector2f& viewSize, sf::Vector2f& topLeftPoint, bool isZoom);
 
 	virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 };

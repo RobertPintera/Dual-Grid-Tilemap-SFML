@@ -18,7 +18,6 @@ public:
 	void render(sf::RenderTarget& target);
 private:
 	sf::RectangleShape shape;
-	
 };
 
 #endif // !TILE_H

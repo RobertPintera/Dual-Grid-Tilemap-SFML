@@ -1,32 +1,25 @@
 #include "DualTilemap.h"
 
-DualTilemap::DualTilemap()
+DualTilemap::DualTilemap():
+	chosenTilePosition(sf::Vector2i(0, 0)),tileSize(sf::Vector2f(16.f, 16.f)),
+	textureTileSize(sf::Vector2i(16, 16)), tileMapSize(sf::Vector2f(0.f, 0.f))
 {
-	chosenTilePosition = sf::Vector2i(0, 0);
-	tileSize = sf::Vector2f(16.f,16.f);
-	textureTileSize = sf::Vector2i(16, 16);
-	tileMapSize = sf::Vector2f(0.f, 0.f);
-
 	initTileLayout();
 	initPointer();
 }
 
-DualTilemap::DualTilemap(sf::Vector2u mapSize,sf::Vector2f tileSize, sf::Vector2i textureTileSize)
+DualTilemap::DualTilemap(sf::Vector2u mapSize,sf::Vector2f tileSize, sf::Vector2i textureTileSize):
+	chosenTilePosition(sf::Vector2i(0.f, 0.f)), tileSize(tileSize),
+	textureTileSize(textureTileSize), tileMapSize(sf::Vector2f(mapSize.x* tileSize.x, mapSize.y* tileSize.y))
 {
-	chosenTilePosition = sf::Vector2i(0.f, 0.f);
-	this->tileSize = tileSize;
-	
-	if (!(textureTileset.loadFromFile("Tilesets/Tileset.png")))
-		std::cout << "Can't load tileset!" << std::endl;
-	
-	this->textureTileSize = textureTileSize;
-
 	initTileLayout();
 	initPointer();
-	
+
+	if (!(textureTileset.loadFromFile("Tilesets/Tileset.png")))
+		std::cout << "Can't load tileset!" << std::endl;
+
 	tilesId.resize(mapSize.x,std::vector<int>(mapSize.y,0));
 	tilesDrawn.resize(mapSize.x+1, std::vector<Tile>(mapSize.y + 1));
-	tileMapSize = sf::Vector2f(mapSize.x * tileSize.x, mapSize.y * tileSize.y);
 
 	for(size_t i = 0; i < tilesDrawn.size(); i++)
 	{
@@ -133,7 +126,7 @@ void DualTilemap::render(sf::RenderTarget& target)
 	{
 		for (auto& j : i)
 		{
-			if (j.getTexture() != nullptr && j.isLieInView(target.getView().getCenter()- target.getView().getSize()/2.f,target.getView().getSize()))
+			if (j.getTexture() != nullptr && j.isLieInView(target.getView().getCenter() - target.getView().getSize()/2.f,target.getView().getSize()))
 			{
 				j.render(target);
 			}

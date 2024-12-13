@@ -27,7 +27,6 @@ public:
 
 private:
 	sf::RenderWindow window;
-	sf::Event sfEvent;
 
 	sf::Font font;
 	
@@ -50,16 +49,8 @@ private:
 
 	//Tilemap variables
 	InformationPanel informationPanel;
-	sf::Vector2f tileSize;
 	std::map<std::string, Grid> grids;
 	DualTilemap tileMap;
-
-	//Initializers
-	void initVariables();
-	void initWindow();
-	void initViews();
-	void initGridsAndTilemap();
-	void initInformationPanel();
 };
 
 #endif // !APP_H
